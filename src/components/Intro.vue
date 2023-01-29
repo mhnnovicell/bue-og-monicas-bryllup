@@ -1,6 +1,10 @@
 <template>
-  <div class="flex justify-center items-center w-full">
-    <div class="flex w-1/2 justify-center items-center">
+  <div
+    class="flex justify-center items-center w-full my-11 flex-col sm:flex-row"
+  >
+    <div
+      class="flex sm:w-1/2 w-full justify-center items-center order-2 sm:order-1 mt-10 sm:mt-0"
+    >
       <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow">
         <div class="p-5">
           <a href="#">
@@ -34,7 +38,9 @@
         </div>
       </div>
     </div>
-    <div class="flex w-1/2 justify-center items-center">
+    <div
+      class="flex sm:w-1/2 w-full justify-center items-center order-1 sm:order-2"
+    >
       <div class="max-w-sm bg-indigo-400 rounded-lg">
         <img
           :src="props.blok?.image.filename"
