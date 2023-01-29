@@ -21,4 +21,9 @@ app.component(
   defineAsyncComponent(() => import('./components/Countdown.vue'))
 );
 
+app.component(
+  'Intro',
+  defineAsyncComponent(() => import('./components/Intro.vue'))
+);
+
 app.mount('#app');
