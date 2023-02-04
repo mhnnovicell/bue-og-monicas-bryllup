@@ -18,7 +18,7 @@
 
         <MapboxMarker :lng-lat="[10.207187, 56.149869]" popup color="#a78bfa">
           <template v-slot:popup>
-            <p>Centralværkstedet</p>
+            <p>Centralværkstedet test</p>
             <p>{{ props.blok?.addressText }}</p>
           </template>
         </MapboxMarker>
