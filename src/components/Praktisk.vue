@@ -133,7 +133,7 @@
             </g>
           </svg>
         </div>
-        <p class="leading-relaxed text-base text-white max-w-sm">
+        <p class="leading-relaxed text-base text-white max-w-xs">
           {{ props.blok?.sleepText }}
         </p>
       </div>
