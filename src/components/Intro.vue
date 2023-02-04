@@ -1,18 +1,18 @@
 <template>
   <div
-    class="flex justify-center items-center w-full my-11 flex-col sm:flex-row"
+    class="flex justify-center items-center w-full my-16 flex-col sm:flex-row"
   >
     <div
       class="flex sm:w-1/2 w-full justify-center items-center order-2 sm:order-1 mt-10 sm:mt-0"
     >
-      <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow">
+      <div class="max-w-md rounded-lg shadow-md">
         <div class="p-5">
           <a href="#">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+            <h5 class="mb-2 text-5xl text-white">
               {{ props.blok?.headline }}
             </h5>
           </a>
-          <p class="mb-3 font-normal text-gray-700">
+          <p class="my-3 mb-5 font-normal text-white">
             Here are the biggest enterprise technology acquisitions of 2021 so
             far, in reverse chronological order.
           </p>
@@ -41,7 +41,7 @@
     <div
       class="flex sm:w-1/2 w-full justify-center items-center order-1 sm:order-2"
     >
-      <div class="max-w-sm bg-indigo-400 rounded-lg">
+      <div class="max-w-sm object-contain rounded-lg">
         <img
           :src="props.blok?.image.filename"
           class="h-auto max-w-lg object-contain rounded-t-lg"

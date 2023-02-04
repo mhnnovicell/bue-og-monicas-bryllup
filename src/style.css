@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body, html{
-    @apply bg-indigo-400
+    @apply bg-violet-400
 }
 
 h1, h2, h3, h4, h5, h6{

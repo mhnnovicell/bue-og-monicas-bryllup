@@ -2,7 +2,9 @@
   <Suspense>
     <template #default>
       <section class="body-font w-full h-full">
-        <div class="container px-10 py-10 mx-auto w-full h-full">
+        <div
+          class="container md:px-10 md:py-10 px-5 py-5 mx-auto w-full h-full"
+        >
           <Home />
         </div>
       </section>

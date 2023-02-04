@@ -26,4 +26,9 @@ app.component(
   defineAsyncComponent(() => import('./components/Intro.vue'))
 );
 
+app.component(
+  'Praktisk',
+  defineAsyncComponent(() => import('./components/Praktisk.vue'))
+);
+
 app.mount('#app');
