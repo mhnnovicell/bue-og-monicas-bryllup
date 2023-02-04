@@ -13,6 +13,7 @@
         :zoom="16"
         ref="mapboxMap"
         :scrollZoom="false"
+        :interactive="false"
       >
         <MapboxNavigationControl position="bottom-right" :showCompass="false" />
 
