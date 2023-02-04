@@ -51,9 +51,13 @@
             />
           </svg>
         </div>
-        <p class="leading-relaxed text-base text-white max-w-sm">
+        <a
+          class="leading-relaxed text-base text-white max-w-sm underline"
+          href="https://www.google.com/maps/place/Centralv%C3%A6rkstedet/@56.1499658,10.2050161,17z/data=!3m1!4b1!4m6!3m5!1s0x464c3f8e4785a45f:0x75b22231bd1930ac!8m2!3d56.1499628!4d10.2072048!16s%2Fg%2F12dpwy275"
+          target="_blank"
+        >
           {{ props.blok?.addressText }}
-        </p>
+        </a>
       </div>
       <div class="flex flex-col mb-10 items-center w-full justify-center">
         <div
@@ -105,7 +109,7 @@
           </svg>
         </div>
         <a
-          class="leading-relaxed text-base text-white max-w-sm"
+          class="leading-relaxed text-base text-white max-w-sm underline"
           :href="'tel:' + props.blok?.phoneText"
         >
           {{ props.blok?.phoneText }}
