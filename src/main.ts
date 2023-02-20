@@ -15,6 +15,11 @@ app.use(StoryblokVue, {
 app.use(router);
 
 app.component(
+  'Login',
+  defineAsyncComponent(() => import('./components/Login.vue'))
+);
+
+app.component(
   'Page',
   defineAsyncComponent(() => import('./components/Page.vue'))
 );

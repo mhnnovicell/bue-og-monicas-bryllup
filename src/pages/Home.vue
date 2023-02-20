@@ -1,9 +1,19 @@
 <script setup>
+import { RouterLink } from 'vue-router';
+
 import { useStoryblok } from '@storyblok/vue';
 const story = await useStoryblok('home', { version: 'draft' });
 </script>
 
 <template>
+  <header>
+    <div class="wrapper">
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/">About</RouterLink>
+      </nav>
+    </div>
+  </header>
   <StoryblokComponent
     v-if="story"
     :blok="story.content"
