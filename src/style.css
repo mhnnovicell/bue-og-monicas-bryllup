@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 body, html{
-    @apply bg-violet-400
+    background: linear-gradient(218deg, #4f46e5, #a78bfa);
+    background-size: 200%;
+    -webkit-animation: purple 12s ease infinite;
+    -moz-animation: purple 12s ease infinite;
+    -o-animation: purple 12s ease infinite;
+    animation: purple 12s ease infinite;
 }
+
 
 h1, h2, h3, h4, h5, h6{
 font-family: 'Great Vibes', cursive;
@@ -12,4 +18,26 @@ font-family: 'Great Vibes', cursive;
 
 a, span, button, div, input, select, option{
     font-family: 'Oswald', sans-serif;
+}
+
+
+@-webkit-keyframes purple {
+    0%{background-position:88% 0%}
+    50%{background-position:13% 100%}
+    100%{background-position:88% 0%}
+}
+@-moz-keyframes purple {
+    0%{background-position:88% 0%}
+    50%{background-position:13% 100%}
+    100%{background-position:88% 0%}
+}
+@-o-keyframes purple {
+    0%{background-position:88% 0%}
+    50%{background-position:13% 100%}
+    100%{background-position:88% 0%}
+}
+@keyframes purple {
+    0%{background-position:88% 0%}
+    50%{background-position:13% 100%}
+    100%{background-position:88% 0%}
 }

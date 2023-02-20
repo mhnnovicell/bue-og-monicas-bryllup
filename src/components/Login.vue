@@ -7,21 +7,19 @@
     data-modal-backdrop="static"
     tabindex="-1"
     aria-hidden="true"
-    class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-full flex flex-col"
+    class="fixed top-0 left-0 right-0 z-50 w-full p-20 overflow-x-hidden overflow-y-auto md:inset-0 h-full flex flex-col"
   >
     <div class="relative w-full h-full flex flex-col">
       <!-- Modal content -->
       <div
-        class="relative rounded-lg shadow bg-gray-700 w-full h-full flex flex-col"
+        class="relative rounded-lg shadow bg-white w-full h-full flex flex-col"
       >
         <!-- Modal header -->
-        <div
-          class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600"
-        >
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+        <div class="flex items-start justify-between p-4 border-b rounded-t">
+          <h3 class="text-xl font-semibold text-gray-900">
             {{ story.content.body[0].headline }}
           </h3>
-          <button
+          <!-- <button
             type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide="staticModal"
@@ -38,14 +36,14 @@
                 clip-rule="evenodd"
               ></path>
             </svg>
-          </button>
+          </button> -->
         </div>
         <!-- Modal body -->
         <div class="p-6 space-y-6">
           <!-- Form element -->
           <form @submit.prevent="submitForm">
-            <label class="block font-bold mb-2" for="firstName">
-              Firstname
+            <label class="block font-light my-2" for="firstName">
+              {{ story.content.body[0].firstNameLabel }}
             </label>
             <input
               class="appearance-none border rounded w-full py-2 px-3 mb-3"
@@ -53,13 +51,19 @@
               type="text"
               v-model.trim="v$.firstName.$model"
               @blur="v$.firstName.$touch"
+              :class="
+                v$.firstName.$error
+                  ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
+                  : ''
+              "
+              autofocus
             />
             <div v-if="v$.firstName.$error" class="text-red-500">
-              Firstname is required
+              {{ story.content.body[0].firstNameLabel }} is required
             </div>
 
-            <label class="block font-bold mb-2" for="lastName">
-              Lastname
+            <label class="block font-light my-2" for="lastName">
+              {{ story.content.body[0].lastNameLabel }}
             </label>
             <input
               class="appearance-none border rounded w-full py-2 px-3 mb-3"
@@ -67,38 +71,69 @@
               type="text"
               v-model.trim="v$.lastName.$model"
               @blur="v$.lastName.$touch"
+              :class="
+                v$.lastName.$error
+                  ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
+                  : ''
+              "
             />
             <div v-if="v$.lastName.$error" class="text-red-500">
-              Lastname is required
+              {{ story.content.body[0].lastNameLabel }} is required
             </div>
 
-            <label class="block font-bold mb-2" for="email"> Email </label>
+            <label class="block font-light my-2" for="email">
+              {{ story.content.body[0].emailLabel }}
+            </label>
             <input
               class="appearance-none border rounded w-full py-2 px-3 mb-3"
               id="email"
               type="email"
               v-model.trim="v$.email.$model"
               @blur="v$.email.$touch"
+              :class="
+                v$.email.$error
+                  ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
+                  : ''
+              "
             />
             <div v-if="v$.email.$error" class="text-red-500">
-              Email is required
+              {{ story.content.body[0].emailLabel }} is required
             </div>
 
             <div v-if="!v$.email.email" class="text-red-500">
-              Invalid email format
+              Invalid {{ story.content.body[0].emailLabel }} format
+            </div>
+
+            <label class="block font-light my-2" for="password">
+              Password
+            </label>
+            <input
+              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              id="password"
+              type="password"
+              v-model.trim="v$.password.$model"
+              @blur="v$.password.$touch"
+              :class="
+                v$.password.$error
+                  ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
+                  : ''
+              "
+            />
+            <div v-if="v$.password.$error" class="text-red-500">
+              Password is required
             </div>
 
             <button
               type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              :disabled="!v$.$invalid"
+              class="bg-indigo-400 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded my-4"
+              :disabled="!v$.$invalid && loading"
             >
               Submit
             </button>
           </form>
         </div>
         <!-- Modal footer -->
-        <div
+        <!-- <div
           class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600"
         >
           <button
@@ -115,7 +150,7 @@
           >
             Decline
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -123,23 +158,28 @@
 
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
-import { required, email } from '@vuelidate/validators';
+import { required, email, minLength } from '@vuelidate/validators';
 import { useStoryblok } from '@storyblok/vue';
 import { reactive, ref } from 'vue';
+import { supabase } from '../supabase';
 
 const story = await useStoryblok('home', { version: 'draft' });
 const props = defineProps({ blok: Object });
 
-const state = reactive({
+const loading = ref(false);
+
+const state = ref({
   firstName: '',
   lastName: '',
   email: '',
+  password: '',
 });
 
 const rules = {
-  firstName: { required }, // Matches state.firstName
-  lastName: { required }, // Matches state.lastName
+  firstName: { required, minLength: minLength(1) }, // Matches state.firstName
+  lastName: { required, minLength: minLength(1) }, // Matches state.lastName
   email: { required, email }, // Matches state.contact.email
+  password: { required, minLength: minLength(1) },
 };
 
 const v$ = ref(useVuelidate(rules, state));
@@ -149,6 +189,34 @@ const submitForm = async () => {
   if (!result) {
     // notify user form is invalid
     return;
+  }
+
+  try {
+    loading.value = true;
+
+    const { data, error } = await supabase.auth.signUp({
+      email: state.value.email,
+      password: state.value.password,
+      options: {
+        data: {
+          first_name: state.value.firstName,
+          last_name: state.value.lastName,
+        },
+      },
+    });
+    if (error) throw error;
+    alert('Check your email for the login link!');
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    }
+  } finally {
+    loading.value = false;
+    state.value.email = '';
+    state.value.firstName = '';
+    state.value.lastName = '';
+    state.value.password = '';
+    v$.value.$reset();
   }
   // perform async actions
 };
