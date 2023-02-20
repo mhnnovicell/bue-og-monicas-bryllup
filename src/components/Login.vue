@@ -19,7 +19,7 @@
           class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600"
         >
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-            Static modal
+            {{ story.content.body[0].headline }}
           </h3>
           <button
             type="button"
@@ -42,18 +42,60 @@
         </div>
         <!-- Modal body -->
         <div class="p-6 space-y-6">
-          <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-            With less than a month to go before the European Union enacts new
-            consumer privacy laws for its citizens, companies around the world
-            are updating their terms of service agreements to comply.
-          </p>
-          <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-            The European Union’s General Data Protection Regulation (G.D.P.R.)
-            goes into effect on May 25 and is meant to ensure a common set of
-            data rights in the European Union. It requires organizations to
-            notify users as soon as possible of high-risk data breaches that
-            could personally affect them.
-          </p>
+          <!-- Form element -->
+          <form @submit.prevent="submitForm">
+            <label class="block font-bold mb-2" for="firstName">
+              Firstname
+            </label>
+            <input
+              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              id="firstName"
+              type="text"
+              v-model.trim="v$.firstName.$model"
+              @blur="v$.firstName.$touch"
+            />
+            <div v-if="v$.firstName.$error" class="text-red-500">
+              Firstname is required
+            </div>
+
+            <label class="block font-bold mb-2" for="lastName">
+              Lastname
+            </label>
+            <input
+              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              id="lastName"
+              type="text"
+              v-model.trim="v$.lastName.$model"
+              @blur="v$.lastName.$touch"
+            />
+            <div v-if="v$.lastName.$error" class="text-red-500">
+              Lastname is required
+            </div>
+
+            <label class="block font-bold mb-2" for="email"> Email </label>
+            <input
+              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              id="email"
+              type="email"
+              v-model.trim="v$.email.$model"
+              @blur="v$.email.$touch"
+            />
+            <div v-if="v$.email.$error" class="text-red-500">
+              Email is required
+            </div>
+
+            <div v-if="!v$.email.email" class="text-red-500">
+              Invalid email format
+            </div>
+
+            <button
+              type="submit"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              :disabled="!v$.$invalid"
+            >
+              Submit
+            </button>
+          </form>
         </div>
         <!-- Modal footer -->
         <div
@@ -80,7 +122,34 @@
 </template>
 
 <script setup lang="ts">
+import { useVuelidate } from '@vuelidate/core';
+import { required, email } from '@vuelidate/validators';
 import { useStoryblok } from '@storyblok/vue';
+import { reactive, ref } from 'vue';
+
 const story = await useStoryblok('home', { version: 'draft' });
 const props = defineProps({ blok: Object });
+
+const state = reactive({
+  firstName: '',
+  lastName: '',
+  email: '',
+});
+
+const rules = {
+  firstName: { required }, // Matches state.firstName
+  lastName: { required }, // Matches state.lastName
+  email: { required, email }, // Matches state.contact.email
+};
+
+const v$ = ref(useVuelidate(rules, state));
+
+const submitForm = async () => {
+  const result = await v$.value.$validate();
+  if (!result) {
+    // notify user form is invalid
+    return;
+  }
+  // perform async actions
+};
 </script>
