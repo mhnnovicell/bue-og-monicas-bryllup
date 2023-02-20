@@ -2,6 +2,7 @@ import { createApp, defineAsyncComponent } from 'vue';
 import { StoryblokVue, apiPlugin } from '@storyblok/vue';
 import App from './App.vue';
 import './style.css';
+import router from './router/router';
 
 const app = createApp(App);
 
@@ -10,6 +11,8 @@ app.use(StoryblokVue, {
   bridge: process.env.NODE_ENV !== 'production', // optimizes by excluding the bridge on production
   use: [apiPlugin],
 });
+
+app.use(router);
 
 app.component(
   'Page',

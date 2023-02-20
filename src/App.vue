@@ -1,11 +1,19 @@
 <template>
+  <header>
+    <div class="wrapper">
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
   <Suspense>
     <template #default>
       <section class="body-font w-full h-full">
         <div
           class="container md:px-10 md:py-10 px-5 py-5 mx-auto w-full h-full"
         >
-          <Home />
+          <RouterView />
         </div>
       </section>
     </template>
@@ -39,5 +47,5 @@
 </template>
 
 <script setup>
-import Home from './pages/Home.vue';
+import { RouterLink, RouterView } from 'vue-router';
 </script>
