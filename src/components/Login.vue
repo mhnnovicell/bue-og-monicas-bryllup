@@ -9,7 +9,7 @@
     aria-hidden="true"
     class="fixed top-0 left-0 right-0 z-50 w-full md:p-20 p-5 overflow-x-hidden overflow-y-auto md:inset-0 h-full flex flex-col"
   >
-    <div class="relative w-full h-full flex flex-col">
+    <div class="relative w-full h-full flex flex-col shadow-lg">
       <!-- Modal content -->
       <div
         class="relative rounded-lg shadow bg-white w-full h-full flex flex-col"

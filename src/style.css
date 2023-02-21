@@ -2,15 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-body, html{
-    background: linear-gradient(218deg, #4f46e5, #a78bfa);
-    background-size: 200%;
-    -webkit-animation: purple 12s ease infinite;
-    -moz-animation: purple 12s ease infinite;
-    -o-animation: purple 12s ease infinite;
-    animation: purple 12s ease infinite;
-    width: 100%;
-    height: 100%;
+
+
+html,
+body {
+  background: rgb(79, 70, 229);
+
+  background: linear-gradient(
+    45deg,
+    rgba(79, 70, 229) 0%,
+    rgb(170, 84, 219) 50%,
+    rgba(167, 139, 250) 100%
+  );
+  animation: aurora 20s  infinite;
+  background-size: 200%;
+}
+
+@keyframes aurora {
+  0% {
+    background-position: left top;
+  }
+  25% {
+    background-position: right top;
+  }
+  50% {
+    background-position: right bottom;
+  }
+  75% {
+    background-position: left bottom;
+  }
+  100% {
+    background-position: left top;
+  }
 }
 
 
@@ -23,23 +46,3 @@ a, span, button, div, input, select, option{
 }
 
 
-@-webkit-keyframes purple {
-    0%{background-position:88% 0%}
-    50%{background-position:13% 100%}
-    100%{background-position:88% 0%}
-}
-@-moz-keyframes purple {
-    0%{background-position:88% 0%}
-    50%{background-position:13% 100%}
-    100%{background-position:88% 0%}
-}
-@-o-keyframes purple {
-    0%{background-position:88% 0%}
-    50%{background-position:13% 100%}
-    100%{background-position:88% 0%}
-}
-@keyframes purple {
-    0%{background-position:88% 0%}
-    50%{background-position:13% 100%}
-    100%{background-position:88% 0%}
-}
