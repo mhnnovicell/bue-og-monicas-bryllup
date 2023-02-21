@@ -9,6 +9,8 @@ body, html{
     -moz-animation: purple 12s ease infinite;
     -o-animation: purple 12s ease infinite;
     animation: purple 12s ease infinite;
+    width: 100%;
+    height: 100%;
 }
 
 

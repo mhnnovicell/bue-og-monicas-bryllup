@@ -7,7 +7,7 @@
     data-modal-backdrop="static"
     tabindex="-1"
     aria-hidden="true"
-    class="fixed top-0 left-0 right-0 z-50 w-full p-20 overflow-x-hidden overflow-y-auto md:inset-0 h-full flex flex-col"
+    class="fixed top-0 left-0 right-0 z-50 w-full md:p-20 p-5 overflow-x-hidden overflow-y-auto md:inset-0 h-full flex flex-col"
   >
     <div class="relative w-full h-full flex flex-col">
       <!-- Modal content -->
