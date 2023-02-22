@@ -204,6 +204,11 @@ const submitForm = async () => {
         },
       },
     });
+     
+        await supabase
+        .from('formular')
+        .insert(state.value)
+        
     if (error) throw error;
     alert('Check your email for the login link!');
   } catch (error) {
