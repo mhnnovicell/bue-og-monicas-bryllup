@@ -123,6 +123,71 @@
               Password is required
             </div>
 
+            <div class="flex items-center mb-4">
+              <input
+                id="default-checkbox"
+                type="checkbox"
+                value=""
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="default-checkbox"
+                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Default checkbox</label
+              >
+            </div>
+
+            <div class="flex items-center mb-4">
+              <input
+                id="default-checkbox"
+                type="checkbox"
+                value=""
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="default-checkbox"
+                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Default checkbox</label
+              >
+            </div>
+
+            <div class="flex items-center mb-4">
+              <input
+                id="default-checkbox"
+                type="checkbox"
+                value=""
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="default-checkbox"
+                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Default checkbox</label
+              >
+            </div>
+
+            <label
+              for="message"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Madallergener</label
+            >
+            <textarea
+              id="message"
+              rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Beskriv dine madallergener"
+              v-model.trim="v$.foodAllergiesDesc.$model"
+              @blur="v$.foodAllergiesDesc.$touch"
+              :class="
+                v$.foodAllergiesDesc.$error
+                  ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
+                  : ''
+              "
+            ></textarea>
+
+            <div v-if="v$.foodAllergiesDesc.$error" class="text-red-500">
+              Madallergener is required
+            </div>
+
             <button
               type="submit"
               class="bg-indigo-400 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded my-4"
@@ -168,21 +233,23 @@ const props = defineProps({ blok: Object });
 
 const loading = ref(false);
 
-const state = ref({
+const form = ref({
   firstName: '',
   lastName: '',
   email: '',
   password: '',
+  foodAllergiesDesc: '',
 });
 
 const rules = {
-  firstName: { required, minLength: minLength(1) }, // Matches state.firstName
-  lastName: { required, minLength: minLength(1) }, // Matches state.lastName
-  email: { required, email }, // Matches state.contact.email
+  firstName: { required, minLength: minLength(1) }, // Matches form.firstName
+  lastName: { required, minLength: minLength(1) }, // Matches form.lastName
+  email: { required, email }, // Matches form.contact.email
   password: { required, minLength: minLength(1) },
+  foodAllergiesDesc: { required, minLength: minLength(1) },
 };
 
-const v$ = ref(useVuelidate(rules, state));
+const v$ = ref(useVuelidate(rules, form));
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
@@ -195,17 +262,17 @@ const submitForm = async () => {
     loading.value = true;
 
     const { data, error } = await supabase.auth.signUp({
-      email: state.value.email,
-      password: state.value.password,
+      email: form.value.email,
+      password: form.value.password,
       options: {
         data: {
-          first_name: state.value.firstName,
-          last_name: state.value.lastName,
+          first_name: form.value.firstName,
+          last_name: form.value.lastName,
         },
       },
     });
 
-    await supabase.from('formular').insert(state.value);
+    await supabase.from('formular').insert(form.value);
 
     if (error) throw error;
     alert('Check your email for the login link!');
@@ -215,10 +282,15 @@ const submitForm = async () => {
     }
   } finally {
     loading.value = false;
-    state.value.email = '';
-    state.value.firstName = '';
-    state.value.lastName = '';
-    state.value.password = '';
+
+    form.value = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      foodAllergiesDesc: '',
+    };
+
     v$.value.$reset();
   }
   // perform async actions
