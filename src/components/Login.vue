@@ -125,6 +125,139 @@
 
             <!-- Musikønsker -->
 
+            <div class="flex">
+              <label
+                for="search-dropdown"
+                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                >Your Email</label
+              >
+
+              <div class="relative w-full">
+                <input
+                  v-model="query"
+                  class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-50 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-l-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                  type="search"
+                  placeholder="Search Mockups, Logos, Design Templates..."
+                  required
+                  @keyup.enter="asyncFind()"
+                />
+
+                <button
+                  type="submit"
+                  class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                  <span class="sr-only">Search</span>
+                </button>
+              </div>
+            </div>
+
+            <div
+              v-if="query !== '' && songs.length >= 1"
+              id="dropdown"
+              class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+            >
+              <ul
+                class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                aria-labelledby="dropdown-button"
+              >
+                <li v-for="value in songs" @click="selectedArtists.push(value)">
+                  <button
+                    type="button"
+                    class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    {{ value.artist.name }} - {{ value.title }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <span
+              v-for="selectedArtist in selectedArtists"
+              v-if="selectedArtists"
+              id="badge-dismiss-default"
+              class="inline-flex items-center px-2 py-1 mr-2 text-sm font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300"
+            >
+              <span v-if="selectedArtist.artist.name"
+                >{{ selectedArtist.artist.name }}
+              </span>
+              <span class="mx-1"> - </span>
+
+              <span> {{ selectedArtist.title }} </span>
+              <button
+                type="button"
+                class="inline-flex items-center p-0.5 ml-2 text-sm text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300"
+                data-dismiss-target="#badge-dismiss-default"
+                aria-label="Remove"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-3.5 h-3.5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                <span class="sr-only"> {{ selectedArtist.title }} </span>
+              </button>
+            </span>
+
+            <!-- <VueMultiselect
+              v-model="selectedArtists"
+              track-by="title"
+              label="title"
+              placeholder="Type to search"
+              open-direction="bottom"
+              :options="songs"
+              @search-change="asyncFind"
+              :multiple="true"
+              :searchable="true"
+              :hide-selected="false"
+              :limit="3"
+              :options-limit="300"
+              id="title"
+              :loading="isLoading"
+              :internal-search="false"
+              :clear-on-select="false"
+              :close-on-select="false"
+              :max-height="600"
+              :show-no-results="false"
+            >
+              <template #tag="{ option, remove }">
+                <div>
+                  <span @click="remove(option)">X</span>
+                  {{ option.title }}
+                </div>
+              </template>
+
+              <template #clear v-slot="props">
+                <div
+                  class="multiselect__clear"
+                  v-if="selectedArtists.length"
+                  @mousedown.prevent.stop="clearAll()"
+                ></div>
+              </template>
+            </VueMultiselect> -->
+
             <label
               for="message"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -187,12 +320,18 @@ import { required, email, minLength } from '@vuelidate/validators';
 import { useStoryblok } from '@storyblok/vue';
 import { reactive, ref } from 'vue';
 import { supabase } from '../supabase';
+import VueMultiselect from 'vue-multiselect';
 
 const story = await useStoryblok('home', { version: 'draft' });
 const props = defineProps({ blok: Object });
 
 const loading = ref(false);
 
+const selectedArtists = ref([] as any[]);
+const songs = ref([] as any[]);
+const isLoading = ref(false);
+
+const query = ref('');
 const form = ref({
   firstName: '',
   lastName: '',
@@ -255,4 +394,34 @@ const submitForm = async () => {
   }
   // perform async actions
 };
+
+const asyncFind = async () => {
+  try {
+    isLoading.value = true;
+
+    const response = await fetch(
+      `https://api.deezer.com/search/?limit=5&strict=true&order=TRACK_DESC&q=${query.value}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': 'da-DK',
+        },
+      }
+    );
+
+    const data = await response.json();
+    console.log(data.data, 'data.data');
+    songs.value = data.data;
+
+    isLoading.value = false;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const clearAll = () => {
+  selectedArtists.value = [] as any[];
+};
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
