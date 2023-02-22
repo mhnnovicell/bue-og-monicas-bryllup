@@ -2,12 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+html{
+height: 100%;
+}
+
+body{
+  min-height: 100%;
+
+}
+
 
 
 html,
 body {
   background: rgb(79, 70, 229);
-
   background: linear-gradient(
     45deg,
     rgba(79, 70, 229) 0%,
