@@ -138,8 +138,8 @@
                   class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg rounded"
                   type="search"
                   placeholder="Søg efter sang"
-                  @blur="asyncFind()"
                   @keyup.enter.prevent="asyncFind()"
+                  @keyup="asyncFind()"
                 />
 
                 <a
@@ -185,7 +185,9 @@
                       type="button"
                       class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-600 dark:hover:text-white text-left"
                     >
-                      {{ value.artist }} - {{ value.name }}
+                      <span>
+                        {{ value.artists[0].name }} - {{ value.name }}
+                      </span>
                     </button>
                   </li>
                 </ul>
@@ -200,9 +202,9 @@
                 class="inline-flex items-center justify-between md:justify-center px-2 py-1 md:mr-2 text-sm font-medium text-white bg-indigo-400 rounded my-4 w-full md:w-1/4"
               >
                 <span
-                  v-if="selectedArtist.artist"
+                  v-if="selectedArtist.artists[0].name"
                   class="px-1 flex items-center md:w-1/2"
-                  >{{ selectedArtist.artist }}
+                  >{{ selectedArtist.artists[0].name }}
                 </span>
                 <span class="mx-1 px-1 flex items-center md:w-auto"> - </span>
 
@@ -313,6 +315,8 @@ const isLoading = ref(false);
 
 const query = ref('');
 
+const token = ref(null);
+
 const form = ref({
   firstName: '',
   lastName: '',
@@ -352,43 +356,7 @@ const rules = {
 
 const v$ = ref(useVuelidate(rules, form));
 
-onMounted(async () => {
-  // const auth = await fetch(
-  //   `https://connect.deezer.com/oauth/auth.php?app_id=584384&redirect_uri=https://www.bueogmonicasbryllup.dk/index.html&perms=basic_access`,
-  //   {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept-Language': 'da-DK',
-  //     },
-  //   }
-  // );
-
-  // const authData = await auth.json();
-
-  // console.log(authData, 'authdata');
-
-  // const accessToken = await fetch(
-  //   `https://connect.deezer.com/oauth/access_token.php?app_id=584384&secret=9d4743da0e19a1bd49c8a3ff4f3a499c&code=freUjWSrM3C0SrVIYlDtybImG060YfF3JXNTr40dUZ0LZI1xVL6&response_type=token`,
-  //   {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept-Language': 'da-DK',
-  //     },
-  //   }
-  // );
-
-  // const authDataTest = await accessToken.json();
-
-  // console.log(authDataTest, 'authDataTest');
-
-  try {
-    const { data, error } = await supabase.from('formular').select();
-    console.log(data, 'data from mounted');
-  } catch (error: any) {
-    alert(error.message);
-  } finally {
-  }
-});
+onMounted(async () => {});
 
 const submitForm = async () => {
   const result = await v$.value.$validate();
@@ -419,31 +387,74 @@ const submitForm = async () => {
   }
 };
 
-const asyncFind = async () => {
-  try {
-    isLoading.value = true;
+const getToken = async () => {
+  const clientId = 'f2bbcfa6dfc449b7b78864635cc97c5b';
+  const clientSecret = '475ddffc59d346329bfca2c0b39b5276';
+  const auth = btoa(`${clientId}:${clientSecret}`);
 
-    //Lastfm api
+  const response = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${auth}`,
+    },
+    body: 'grant_type=client_credentials',
+  });
 
-    const response = await fetch(
-      `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${query.value}&api_key=15f22b0f2e973cd37561b1d521edeff6&format=json&limit=5`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': 'da-DK',
-        },
-      }
-    );
-
+  if (response.ok) {
     const data = await response.json();
-    console.log(data, 'data');
-    songs.value = data.results.trackmatches.track;
-
-    isLoading.value = false;
-  } catch (error) {
-    console.error(error);
+    token.value = data.access_token;
+  } else {
+    console.error(response.statusText);
   }
 };
+
+const asyncFind = async () => {
+  // try {
+  //   isLoading.value = true;
+
+  //   //Lastfm api
+
+  //   const response = await fetch(
+  //     `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${query.value}&api_key=15f22b0f2e973cd37561b1d521edeff6&format=json&limit=5`,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept-Language': 'da-DK',
+  //       },
+  //     }
+  //   );
+
+  //   const data = await response.json();
+  //   console.log(data, 'data');
+  //   songs.value = data.results.trackmatches.track;
+
+  //   isLoading.value = false;
+  // } catch (error) {
+  //   console.error(error);
+  // }
+
+  const url = new URL('https://api.spotify.com/v1/search');
+  url.searchParams.append('q', query.value);
+  url.searchParams.append('type', 'track');
+  url.searchParams.append('limit', '5');
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token.value}`,
+    },
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    songs.value = data.tracks.items;
+    isLoading.value = false;
+  } else {
+    console.error(response.statusText);
+  }
+};
+
+await getToken();
 
 const clearAll = () => {
   selectedArtists.value = [] as any[];
