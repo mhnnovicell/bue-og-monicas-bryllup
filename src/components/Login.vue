@@ -214,6 +214,8 @@
                   class="inline-flex items-center justify-end p-0.5 ml-2 text-sm text-white bg-transparent rounded-sm hover:bg-indigo-400 hover:text-white w-1/4"
                   data-dismiss-target="#badge-dismiss-default"
                   aria-label="Remove"
+                  @click="removeArtist(selectedArtist)"
+                  @touchend="removeArtist(selectedArtist)"
                 >
                   <svg
                     aria-hidden="true"
@@ -445,5 +447,10 @@ const asyncFind = async () => {
 
 const clearAll = () => {
   selectedArtists.value = [] as any[];
+};
+
+const removeArtist = (index: any) => {
+  // this.todos.splice(index, 1)
+  selectedArtists.value.splice(index, 1);
 };
 </script>
