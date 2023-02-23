@@ -55,4 +55,14 @@ a, span, button, div, input, select, option{
   font-display: swap;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 

@@ -7,12 +7,14 @@
     data-modal-backdrop="static"
     tabindex="-1"
     aria-hidden="true"
-    class="fixed top-0 left-0 right-0 z-50 w-full md:p-20 p-5 overflow-x-hidden overflow-y-auto md:inset-0 h-full flex flex-col"
+    class="modal w-full h-full top-0 left-0 flex items-center justify-center overflow-visible"
   >
-    <div class="relative w-full h-full flex flex-col shadow-lg">
+    <div
+      class="modal-container w-full h-full overflow-y-auto p-5 my-5 overflow-visible"
+    >
       <!-- Modal content -->
       <div
-        class="relative rounded-lg shadow bg-white w-full h-full flex flex-col"
+        class="modal-content container mx-auto h-auto text-left md:p-4 p-2 bg-white rounded-md"
       >
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t">
@@ -39,9 +41,11 @@
           </button> -->
         </div>
         <!-- Modal body -->
-        <div class="p-6 space-y-6">
+        <div
+          class="p-4 space-y-6 modal-content container mx-auto h-auto text-left z-50"
+        >
           <!-- Form element -->
-          <form @submit.prevent="submitForm" action="#">
+          <form @submit.prevent="submitForm" action="#" class="z-50">
             <label class="block font-normal my-2" for="firstName">
               {{ story.content.body[0].firstNameLabel }}
             </label>
@@ -56,7 +60,6 @@
                   ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
                   : ''
               "
-              autofocus
               placeholder="Indtast fornavn"
             />
 
@@ -126,10 +129,10 @@
             </div>
 
             <div class="flex flex-col">
-              <label class="flex font-normal my-2" for="search-dropdown">
+              <label class="block font-normal my-2" for="search-dropdown">
                 Musikønsker
               </label>
-              <div class="relative w-full">
+              <div class="relative w-full mb-3">
                 <input
                   v-model="query"
                   class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg rounded"
@@ -164,60 +167,71 @@
               </div>
             </div>
 
-            <div
-              v-if="query !== '' && songs.length >= 1"
-              id="dropdown"
-              class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
-            >
-              <ul
-                class="py-2 text-sm text-gray-700 dark:text-gray-200"
-                aria-labelledby="dropdown-button"
+            <Transition name="fade">
+              <div
+                v-if="query !== '' && songs.length >= 1"
+                id="dropdown"
+                class="z-10 bg-indigo-400 divide-y divide-black rounded-lg shadow md:w-1/2 w-full"
               >
-                <li v-for="value in songs" @click="selectedArtists.push(value)">
-                  <button
-                    type="button"
-                    class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    {{ value.artist }} - {{ value.name }}
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <span
-              v-for="selectedArtist in selectedArtists"
-              v-if="selectedArtists"
-              id="badge-dismiss-default"
-              class="inline-flex items-center px-2 py-1 mr-2 text-sm font-medium text-white bg-indigo-400 rounded my-4"
-            >
-              <span v-if="selectedArtist.artist"
-                >{{ selectedArtist.artist }}
-              </span>
-              <span class="mx-1"> - </span>
-
-              <span> {{ selectedArtist.name }} </span>
-              <button
-                type="button"
-                class="inline-flex items-center p-0.5 ml-2 text-sm text-white bg-transparent rounded-sm hover:bg-indigo-400 hover:text-white"
-                data-dismiss-target="#badge-dismiss-default"
-                aria-label="Remove"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="w-3.5 h-3.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
+                <ul
+                  class="py-2 text-sm text-white"
+                  aria-labelledby="dropdown-button"
                 >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-                <span class="sr-only"> {{ selectedArtist.title }} </span>
-              </button>
-            </span>
+                  <li
+                    v-for="value in songs"
+                    @click="selectedArtists.push(value)"
+                  >
+                    <button
+                      type="button"
+                      class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-600 dark:hover:text-white text-left"
+                    >
+                      {{ value.artist }} - {{ value.name }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </Transition>
+
+            <transition-group name="fade">
+              <span
+                v-for="selectedArtist in selectedArtists"
+                v-if="selectedArtists"
+                id="badge-dismiss-default"
+                class="inline-flex items-center justify-between md:justify-center px-2 py-1 md:mr-2 text-sm font-medium text-white bg-indigo-400 rounded my-4 w-full md:w-1/4"
+              >
+                <span
+                  v-if="selectedArtist.artist"
+                  class="px-1 flex items-center md:w-1/2"
+                  >{{ selectedArtist.artist }}
+                </span>
+                <span class="mx-1 px-1 flex items-center md:w-auto"> - </span>
+
+                <span class="px-1 flex items-center md:w-1/2">
+                  {{ selectedArtist.name }}
+                </span>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-end p-0.5 ml-2 text-sm text-white bg-transparent rounded-sm hover:bg-indigo-400 hover:text-white w-1/4"
+                  data-dismiss-target="#badge-dismiss-default"
+                  aria-label="Remove"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="w-3.5 h-3.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <span class="sr-only"> {{ selectedArtist.title }} </span>
+                </button>
+              </span>
+            </transition-group>
 
             <label for="message" class="block font-normal my-2"
               >Madallergener</label
@@ -406,6 +420,8 @@ const submitForm = async () => {
 const asyncFind = async () => {
   try {
     isLoading.value = true;
+
+    //Lastfm api
 
     const response = await fetch(
       `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${query.value}&api_key=15f22b0f2e973cd37561b1d521edeff6&format=json&limit=5`,
