@@ -42,7 +42,7 @@
         <div class="p-6 space-y-6">
           <!-- Form element -->
           <form @submit.prevent="submitForm">
-            <label class="block font-light my-2" for="firstName">
+            <label class="block font-normal my-2" for="firstName">
               {{ story.content.body[0].firstNameLabel }}
             </label>
             <input
@@ -57,12 +57,19 @@
                   : ''
               "
               autofocus
+              placeholder="Indtast fornavn"
             />
-            <div v-if="v$.firstName.$error" class="text-red-500">
-              {{ story.content.body[0].firstNameLabel }} is required
+
+            <div
+              v-if="v$.firstName.$error"
+              class="text-red-500 font-normal"
+              v-for="error of v$.firstName.$errors"
+              :key="error.$uid"
+            >
+              {{ error.$message }}
             </div>
 
-            <label class="block font-light my-2" for="lastName">
+            <label class="block font-normal my-2" for="lastName">
               {{ story.content.body[0].lastNameLabel }}
             </label>
             <input
@@ -76,12 +83,19 @@
                   ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
                   : ''
               "
+              placeholder="Indtast efternavn"
             />
-            <div v-if="v$.lastName.$error" class="text-red-500">
-              {{ story.content.body[0].lastNameLabel }} is required
+
+            <div
+              v-if="v$.lastName.$error"
+              class="text-red-500 font-normal"
+              v-for="error of v$.lastName.$errors"
+              :key="error.$uid"
+            >
+              {{ error.$message }}
             </div>
 
-            <label class="block font-light my-2" for="email">
+            <label class="block font-normal my-2" for="email">
               {{ story.content.body[0].emailLabel }}
             </label>
             <input
@@ -95,56 +109,38 @@
                   ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
                   : ''
               "
+              placeholder="Indtast email"
             />
-            <div v-if="v$.email.$error" class="text-red-500">
-              {{ story.content.body[0].emailLabel }} is required
+
+            <div
+              v-if="v$.email.$error"
+              class="text-red-500 font-normal"
+              v-for="error of v$.email.$errors"
+              :key="error.$uid"
+            >
+              {{ error.$message }}
             </div>
 
-            <div v-if="!v$.email.email" class="text-red-500">
+            <div v-if="!v$.email.email" class="text-red-500 font-normal">
               Invalid {{ story.content.body[0].emailLabel }} format
             </div>
 
-            <label class="block font-light my-2" for="password">
-              Password
-            </label>
-            <input
-              class="appearance-none border rounded w-full py-2 px-3 mb-3"
-              id="password"
-              type="password"
-              v-model.trim="v$.password.$model"
-              @blur="v$.password.$touch"
-              :class="
-                v$.password.$error
-                  ? 'border border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50  '
-                  : ''
-              "
-            />
-            <div v-if="v$.password.$error" class="text-red-500">
-              Password is required
-            </div>
-
-            <!-- Musikønsker -->
-
-            <div class="flex">
-              <label
-                for="search-dropdown"
-                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                >Your Email</label
-              >
-
+            <div class="flex flex-col">
+              <label class="flex font-normal my-2" for="search-dropdown">
+                Musikønsker
+              </label>
               <div class="relative w-full">
                 <input
                   v-model="query"
-                  class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-50 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-l-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                  class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg rounded"
                   type="search"
-                  placeholder="Search Mockups, Logos, Design Templates..."
-                  required
+                  placeholder="Søg efter sang"
                   @keyup.enter="asyncFind()"
                 />
 
                 <button
                   type="submit"
-                  class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-indigo-400 rounded-r-lg border border-indigo-400 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-600"
                 >
                   <svg
                     aria-hidden="true"
@@ -161,7 +157,7 @@
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     ></path>
                   </svg>
-                  <span class="sr-only">Search</span>
+                  <span class="sr-only">Musikønsker</span>
                 </button>
               </div>
             </div>
@@ -190,7 +186,7 @@
               v-for="selectedArtist in selectedArtists"
               v-if="selectedArtists"
               id="badge-dismiss-default"
-              class="inline-flex items-center px-2 py-1 mr-2 text-sm font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300"
+              class="inline-flex items-center px-2 py-1 mr-2 text-sm font-medium text-white bg-indigo-400 rounded my-4"
             >
               <span v-if="selectedArtist.artist.name"
                 >{{ selectedArtist.artist.name }}
@@ -200,7 +196,7 @@
               <span> {{ selectedArtist.title }} </span>
               <button
                 type="button"
-                class="inline-flex items-center p-0.5 ml-2 text-sm text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300"
+                class="inline-flex items-center p-0.5 ml-2 text-sm text-white bg-transparent rounded-sm hover:bg-indigo-400 hover:text-white"
                 data-dismiss-target="#badge-dismiss-default"
                 aria-label="Remove"
               >
@@ -221,52 +217,13 @@
               </button>
             </span>
 
-            <!-- <VueMultiselect
-              v-model="selectedArtists"
-              track-by="title"
-              label="title"
-              placeholder="Type to search"
-              open-direction="bottom"
-              :options="songs"
-              @search-change="asyncFind"
-              :multiple="true"
-              :searchable="true"
-              :hide-selected="false"
-              :limit="3"
-              :options-limit="300"
-              id="title"
-              :loading="isLoading"
-              :internal-search="false"
-              :clear-on-select="false"
-              :close-on-select="false"
-              :max-height="600"
-              :show-no-results="false"
-            >
-              <template #tag="{ option, remove }">
-                <div>
-                  <span @click="remove(option)">X</span>
-                  {{ option.title }}
-                </div>
-              </template>
-
-              <template #clear v-slot="props">
-                <div
-                  class="multiselect__clear"
-                  v-if="selectedArtists.length"
-                  @mousedown.prevent.stop="clearAll()"
-                ></div>
-              </template>
-            </VueMultiselect> -->
-
-            <label
-              for="message"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            <label for="message" class="block font-normal my-2"
               >Madallergener</label
             >
             <textarea
               id="message"
               rows="4"
-              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="appearance-none border rounded w-full py-2 px-3 mb-3"
               placeholder="Beskriv dine madallergener"
               v-model.trim="v$.foodAllergiesDesc.$model"
               @blur="v$.foodAllergiesDesc.$touch"
@@ -277,13 +234,18 @@
               "
             ></textarea>
 
-            <div v-if="v$.foodAllergiesDesc.$error" class="text-red-500">
-              Madallergener is required
+            <div
+              v-if="v$.foodAllergiesDesc.$error"
+              class="text-red-500 font-normal font-normal"
+              v-for="error of v$.foodAllergiesDesc.$errors"
+              :key="error.$uid"
+            >
+              {{ error.$message }}
             </div>
 
             <button
               type="submit"
-              class="bg-indigo-400 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded my-4"
+              class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
               :disabled="!v$.$invalid && loading"
             >
               Submit
@@ -316,14 +278,13 @@
 
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
-import { required, email, minLength } from '@vuelidate/validators';
+import { required, email, minLength, helpers } from '@vuelidate/validators';
 import { useStoryblok } from '@storyblok/vue';
 import { reactive, ref } from 'vue';
 import { supabase } from '../supabase';
-import VueMultiselect from 'vue-multiselect';
 
-const story = await useStoryblok('home', { version: 'draft' });
-const props = defineProps({ blok: Object });
+const { value: story } = await useStoryblok('home', { version: 'draft' });
+const { blok } = defineProps({ blok: Object });
 
 const loading = ref(false);
 
@@ -332,20 +293,42 @@ const songs = ref([] as any[]);
 const isLoading = ref(false);
 
 const query = ref('');
+
 const form = ref({
   firstName: '',
   lastName: '',
   email: '',
-  password: '',
   foodAllergiesDesc: '',
 });
 
 const rules = {
-  firstName: { required, minLength: minLength(1) }, // Matches form.firstName
-  lastName: { required, minLength: minLength(1) }, // Matches form.lastName
-  email: { required, email }, // Matches form.contact.email
-  password: { required, minLength: minLength(1) },
-  foodAllergiesDesc: { required, minLength: minLength(1) },
+  firstName: {
+    required: helpers.withMessage('Fornavn må ikke være tomt', required),
+    minLength: helpers.withMessage(
+      ({ $pending, $invalid, $params, $model }) =>
+        `Fornavn skal minimum være ${$params.min} karakter langt`,
+      minLength(2)
+    ),
+  },
+  lastName: {
+    required: helpers.withMessage('Efternavn må ikke være tomt', required),
+    minLength: helpers.withMessage(
+      ({ $pending, $invalid, $params, $model }) =>
+        `Efternavn skal minimum være ${$params.min} karakter langt`,
+      minLength(2)
+    ),
+  },
+  email: {
+    required: helpers.withMessage('Email må ikke være tomt', required),
+    email: helpers.withMessage('Email er ikke korrekt format', email),
+  },
+  foodAllergiesDesc: {
+    minLength: helpers.withMessage(
+      ({ $pending, $invalid, $params, $model }) =>
+        `Madallergener skal minimum være ${$params.min} karakter langt`,
+      minLength(2)
+    ),
+  },
 };
 
 const v$ = ref(useVuelidate(rules, form));
@@ -360,25 +343,11 @@ const submitForm = async () => {
   try {
     loading.value = true;
 
-    const { data, error } = await supabase.auth.signUp({
-      email: form.value.email,
-      password: form.value.password,
-      options: {
-        data: {
-          first_name: form.value.firstName,
-          last_name: form.value.lastName,
-        },
-      },
-    });
-
     await supabase.from('formular').insert(form.value);
 
-    if (error) throw error;
     alert('Check your email for the login link!');
-  } catch (error) {
-    if (error instanceof Error) {
-      alert(error.message);
-    }
+  } catch (error: any) {
+    alert(error.message);
   } finally {
     loading.value = false;
 
@@ -386,13 +355,11 @@ const submitForm = async () => {
       firstName: '',
       lastName: '',
       email: '',
-      password: '',
       foodAllergiesDesc: '',
     };
 
     v$.value.$reset();
   }
-  // perform async actions
 };
 
 const asyncFind = async () => {
@@ -423,5 +390,3 @@ const clearAll = () => {
   selectedArtists.value = [] as any[];
 };
 </script>
-
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>

@@ -46,11 +46,13 @@ body {
 
 
 h1, h2, h3, h4, h5, h6{
-font-family: 'Great Vibes', cursive;
+  font-family: 'Dancing Script', cursive;
+  font-display: swap;
 }
 
 a, span, button, div, input, select, option{
-    font-family: 'Oswald', sans-serif;
+  font-family: 'Josefin Sans', sans-serif;
+  font-display: swap;
 }
 
 
