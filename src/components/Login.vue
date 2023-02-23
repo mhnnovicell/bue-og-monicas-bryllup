@@ -144,7 +144,7 @@
 
                 <a
                   @click="asyncFind()"
-                  @touchstart="asyncFind()"
+                  @touchend="asyncFind()"
                   class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-indigo-400 rounded-r-lg border border-indigo-400 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-600"
                 >
                   <svg
