@@ -135,11 +135,12 @@
                   class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg rounded"
                   type="search"
                   placeholder="Søg efter sang"
+                  @blur="asyncFind()"
                   @keyup.enter="asyncFind()"
                 />
 
-                <button
-                  type="submit"
+                <a
+                  @click="asyncFind()"
                   class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-indigo-400 rounded-r-lg border border-indigo-400 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-600"
                 >
                   <svg
@@ -158,7 +159,7 @@
                     ></path>
                   </svg>
                   <span class="sr-only">Musikønsker</span>
-                </button>
+                </a>
               </div>
             </div>
 
@@ -280,7 +281,7 @@
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, helpers } from '@vuelidate/validators';
 import { useStoryblok } from '@storyblok/vue';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { supabase } from '../supabase';
 
 const { value: story } = await useStoryblok('home', { version: 'draft' });
@@ -332,6 +333,16 @@ const rules = {
 };
 
 const v$ = ref(useVuelidate(rules, form));
+
+onMounted(async () => {
+  try {
+    const { data, error } = await supabase.from('formular').select();
+    console.log(data, 'data from mounted');
+  } catch (error: any) {
+    alert(error.message);
+  } finally {
+  }
+});
 
 const submitForm = async () => {
   const result = await v$.value.$validate();

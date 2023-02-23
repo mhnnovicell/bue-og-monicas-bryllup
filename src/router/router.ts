@@ -3,8 +3,8 @@ const Login = () => import('../components/Login.vue');
 const Home = () => import('../pages/Home.vue');
 
 const routes = [
-  { path: '/', component: Login },
-  { path: '/forside', component: Home },
+  { path: '/', component: Login, name: 'Login' },
+  { path: '/forside', component: Home, name: 'Home' },
 ];
 
 const router = createRouter({
