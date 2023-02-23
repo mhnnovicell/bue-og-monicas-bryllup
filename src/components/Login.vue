@@ -269,7 +269,7 @@
               :disabled="!v$.$invalid && loading"
               @click="submitForm"
             >
-              Submit
+              Bekræft
             </button>
           </form>
         </div>
@@ -405,7 +405,7 @@ const getToken = async () => {
     const data = await response.json();
     token.value = data.access_token;
   } else {
-    console.error(response.statusText);
+    alert(response.statusText);
   }
 };
 
