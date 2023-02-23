@@ -41,7 +41,7 @@
         <!-- Modal body -->
         <div class="p-6 space-y-6">
           <!-- Form element -->
-          <form @submit.prevent="submitForm">
+          <form @submit.prevent="submitForm" action="#">
             <label class="block font-normal my-2" for="firstName">
               {{ story.content.body[0].firstNameLabel }}
             </label>
@@ -136,11 +136,12 @@
                   type="search"
                   placeholder="Søg efter sang"
                   @blur="asyncFind()"
-                  @keyup.enter="asyncFind()"
+                  @keyup.enter.prevent="asyncFind()"
                 />
 
                 <a
                   @click="asyncFind()"
+                  @touchstart="asyncFind()"
                   class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-indigo-400 rounded-r-lg border border-indigo-400 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-600"
                 >
                   <svg
@@ -177,7 +178,7 @@
                     type="button"
                     class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    {{ value.artist.name }} - {{ value.title }}
+                    {{ value.artist }} - {{ value.name }}
                   </button>
                 </li>
               </ul>
@@ -189,12 +190,12 @@
               id="badge-dismiss-default"
               class="inline-flex items-center px-2 py-1 mr-2 text-sm font-medium text-white bg-indigo-400 rounded my-4"
             >
-              <span v-if="selectedArtist.artist.name"
-                >{{ selectedArtist.artist.name }}
+              <span v-if="selectedArtist.artist"
+                >{{ selectedArtist.artist }}
               </span>
               <span class="mx-1"> - </span>
 
-              <span> {{ selectedArtist.title }} </span>
+              <span> {{ selectedArtist.name }} </span>
               <button
                 type="button"
                 class="inline-flex items-center p-0.5 ml-2 text-sm text-white bg-transparent rounded-sm hover:bg-indigo-400 hover:text-white"
@@ -248,6 +249,7 @@
               type="submit"
               class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
               :disabled="!v$.$invalid && loading"
+              @click="submitForm"
             >
               Submit
             </button>
@@ -335,6 +337,34 @@ const rules = {
 const v$ = ref(useVuelidate(rules, form));
 
 onMounted(async () => {
+  // const auth = await fetch(
+  //   `https://connect.deezer.com/oauth/auth.php?app_id=584384&redirect_uri=https://www.bueogmonicasbryllup.dk/index.html&perms=basic_access`,
+  //   {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept-Language': 'da-DK',
+  //     },
+  //   }
+  // );
+
+  // const authData = await auth.json();
+
+  // console.log(authData, 'authdata');
+
+  // const accessToken = await fetch(
+  //   `https://connect.deezer.com/oauth/access_token.php?app_id=584384&secret=9d4743da0e19a1bd49c8a3ff4f3a499c&code=freUjWSrM3C0SrVIYlDtybImG060YfF3JXNTr40dUZ0LZI1xVL6&response_type=token`,
+  //   {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept-Language': 'da-DK',
+  //     },
+  //   }
+  // );
+
+  // const authDataTest = await accessToken.json();
+
+  // console.log(authDataTest, 'authDataTest');
+
   try {
     const { data, error } = await supabase.from('formular').select();
     console.log(data, 'data from mounted');
@@ -378,7 +408,7 @@ const asyncFind = async () => {
     isLoading.value = true;
 
     const response = await fetch(
-      `https://api.deezer.com/search/?limit=5&strict=true&order=TRACK_DESC&q=${query.value}`,
+      `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${query.value}&api_key=15f22b0f2e973cd37561b1d521edeff6&format=json&limit=5`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -388,8 +418,8 @@ const asyncFind = async () => {
     );
 
     const data = await response.json();
-    console.log(data.data, 'data.data');
-    songs.value = data.data;
+    console.log(data, 'data');
+    songs.value = data.results.trackmatches.track;
 
     isLoading.value = false;
   } catch (error) {
