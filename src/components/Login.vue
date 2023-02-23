@@ -461,7 +461,8 @@ const clearAll = () => {
 };
 
 const removeArtist = (index: any) => {
-  // this.todos.splice(index, 1)
-  selectedArtists.value.splice(index, 1);
+  const selectedIndex = selectedArtists.value.indexOf(index);
+
+  selectedArtists.value.splice(selectedIndex, 1);
 };
 </script>
