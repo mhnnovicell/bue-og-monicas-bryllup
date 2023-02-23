@@ -388,8 +388,8 @@ const submitForm = async () => {
 };
 
 const getToken = async () => {
-  const clientId = 'f2bbcfa6dfc449b7b78864635cc97c5b';
-  const clientSecret = '475ddffc59d346329bfca2c0b39b5276';
+  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+  const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
   const auth = btoa(`${clientId}:${clientSecret}`);
 
   const response = await fetch('https://accounts.spotify.com/api/token', {
