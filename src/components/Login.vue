@@ -186,7 +186,10 @@
                 >
                   <li
                     v-for="value in songs"
-                    @click="selectedArtists.push(value)"
+                    @click="
+                      selectedArtists.push(value) &&
+                        goToElement(scroolToElement)
+                    "
                   >
                     <button
                       type="button"
@@ -276,6 +279,7 @@
             </div>
 
             <button
+              ref="scroolToElement"
               type="submit"
               class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
               :disabled="!v$.$invalid && loading"
@@ -328,6 +332,8 @@ const isLoading = ref(false);
 const query = ref('');
 
 const token = ref(null);
+
+const scroolToElement = ref(null);
 
 const form = ref({
   firstName: '',
@@ -482,5 +488,11 @@ const removeArtist = (array: any, itemToRemove: any) => {
   if (index > -1) {
     array.splice(index, 1);
   }
+};
+
+const goToElement = (refName) => {
+  var element = scroolToElement.value;
+  var top = element?.offsetTop;
+  window.scrollTo(5000, top);
 };
 </script>
