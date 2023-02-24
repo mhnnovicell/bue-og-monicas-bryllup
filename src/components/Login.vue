@@ -490,7 +490,7 @@ const removeArtist = (array: any, itemToRemove: any) => {
   }
 };
 
-const goToElement = (refName) => {
+const goToElement = (refName: any) => {
   var element = scroolToElement.value;
   var top = element?.offsetTop;
   window.scrollTo(5000, top);
