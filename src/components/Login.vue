@@ -172,7 +172,11 @@
 
             <Transition name="fade">
               <div
-                v-if="query !== '' && songs.length >= 1"
+                v-if="
+                  query !== '' &&
+                  songs.length >= 1 &&
+                  selectedArtists.length < 3
+                "
                 id="dropdown"
                 class="z-10 bg-indigo-400 divide-y divide-black rounded-lg shadow md:w-1/2 w-full"
               >
@@ -200,7 +204,7 @@
             <TransitionGroup name="fade" tag="div">
               <div v-if="selectedArtists.length >= 1">
                 <p
-                  class="text-3xl font-semibold text-red-500 my-4"
+                  class="text-3xl font-semibold text-red-500 my-4 underline"
                   v-if="selectedArtists.length === 3"
                 >
                   Max 3 ønsker i alt!
@@ -219,15 +223,16 @@
                       class="rounded-t-lg"
                       :src="selectedArtist.album.images[0].url"
                       :alt="selectedArtist.name"
+                      loading="lazy"
                     />
                     <div class="p-5">
-                      <h5
+                      <h4
                         v-if="selectedArtist.artists[0].name"
-                        class="mb-2 text-2xl font-bold tracking-tight text-black"
+                        class="mb-2 text-3xl font-medium text-black"
                       >
                         {{ selectedArtist.artists[0].name }}
-                      </h5>
-                      <p class="mb-3 font-normal text-black">
+                      </h4>
+                      <p class="mb-3 font-normal text-lg text-black">
                         {{ selectedArtist.name }}
                       </p>
                       <a
@@ -329,6 +334,9 @@ const form = ref({
   lastName: '',
   email: '',
   foodAllergiesDesc: '',
+  musicWishOne: '',
+  musicWishTwo: '',
+  musicWishThree: '',
 });
 
 const rules = {
@@ -375,6 +383,27 @@ const submitForm = async () => {
   try {
     loading.value = true;
 
+    if (selectedArtists.value[0]) {
+      form.value.musicWishOne =
+        selectedArtists.value[0].artists[0].name +
+        ' - ' +
+        selectedArtists.value[0].name;
+    }
+
+    if (selectedArtists.value[1]) {
+      form.value.musicWishTwo =
+        selectedArtists.value[1].artists[0].name +
+        ' - ' +
+        selectedArtists.value[1].name;
+    }
+
+    if (selectedArtists.value[2]) {
+      form.value.musicWishThree =
+        selectedArtists.value[2].artists[0].name +
+        ' - ' +
+        selectedArtists.value[2].name;
+    }
+
     await supabase.from('formular').insert(form.value);
 
     alert('Check your email for the login link!');
@@ -388,7 +417,14 @@ const submitForm = async () => {
       lastName: '',
       email: '',
       foodAllergiesDesc: '',
+      musicWishOne: '',
+      musicWishTwo: '',
+      musicWishThree: '',
     };
+
+    query.value = '';
+
+    selectedArtists.value = [];
 
     v$.value.$reset();
   }
