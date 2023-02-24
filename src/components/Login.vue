@@ -18,7 +18,7 @@
       >
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t">
-          <h3 class="text-xl font-semibold text-gray-900">
+          <h3 class="text-6xl font-normal text-gray-900">
             {{ story.content.body[0].headline }}
           </h3>
           <!-- <button
@@ -114,7 +114,6 @@
               "
               placeholder="Indtast email"
             />
-
             <div
               v-if="v$.email.$error"
               class="text-red-500 font-normal"
@@ -124,9 +123,11 @@
               {{ error.$message }}
             </div>
 
-            <div v-if="!v$.email.email" class="text-red-500 font-normal">
-              Invalid {{ story.content.body[0].emailLabel }} format
-            </div>
+            <!-- <TransitionGroup name="fade" tag="div">
+              <div v-if="!v$.email.email" class="text-red-500 font-normal">
+                Invalid {{ story.content.body[0].emailLabel }} format
+              </div>
+            </TransitionGroup> -->
 
             <div class="flex flex-col">
               <label class="block font-normal my-2" for="search-dropdown">
@@ -140,9 +141,11 @@
                   placeholder="Søg efter sang"
                   @keyup.enter.prevent="asyncFind()"
                   @keyup="asyncFind()"
+                  :disabled="selectedArtists.length === 3"
                 />
 
                 <a
+                  :disabled="selectedArtists.length === 3"
                   @click="asyncFind()"
                   @touchend="asyncFind()"
                   class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-indigo-400 rounded-r-lg border border-indigo-400 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-600"
@@ -194,48 +197,52 @@
               </div>
             </Transition>
 
-            <transition-group name="fade">
-              <span
-                v-for="selectedArtist in selectedArtists"
-                v-if="selectedArtists"
-                id="badge-dismiss-default"
-                class="inline-flex items-center justify-between md:justify-center px-2 py-1 md:mr-2 text-sm font-medium text-white bg-indigo-400 rounded my-4 w-full md:w-1/4"
-              >
-                <span
-                  v-if="selectedArtist.artists[0].name"
-                  class="px-1 flex items-center md:w-1/2"
-                  >{{ selectedArtist.artists[0].name }}
-                </span>
-                <span class="mx-1 px-1 flex items-center md:w-auto"> - </span>
-
-                <span class="px-1 flex items-center md:w-1/2">
-                  {{ selectedArtist.name }}
-                </span>
-                <button
-                  type="button"
-                  class="inline-flex items-center justify-end p-0.5 ml-2 text-sm text-white bg-transparent rounded-sm hover:bg-indigo-400 hover:text-white w-1/4"
-                  data-dismiss-target="#badge-dismiss-default"
-                  aria-label="Remove"
-                  @click="removeArtist(selectedArtist)"
-                  @touchend="removeArtist(selectedArtist)"
+            <TransitionGroup name="fade" tag="div">
+              <div v-if="selectedArtists.length >= 1">
+                <p
+                  class="text-3xl font-semibold text-red-500 my-4"
+                  v-if="selectedArtists.length === 3"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="w-3.5 h-3.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
+                  Max 3 ønsker i alt!
+                </p>
+                <TransitionGroup
+                  name="fade"
+                  tag="div"
+                  class="flex md:flex-row flex-col my-4"
+                >
+                  <div
+                    class="max-w-sm bg-white border border-gray-200 rounded-lg shadow md:mr-4 my-4 md:my-0"
+                    v-for="selectedArtist in selectedArtists"
+                    :key="selectedArtist"
                   >
-                    <path
-                      fill-rule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                  <span class="sr-only"> {{ selectedArtist.title }} </span>
-                </button>
-              </span>
-            </transition-group>
+                    <img
+                      class="rounded-t-lg"
+                      :src="selectedArtist.album.images[0].url"
+                      :alt="selectedArtist.name"
+                    />
+                    <div class="p-5">
+                      <h5
+                        v-if="selectedArtist.artists[0].name"
+                        class="mb-2 text-2xl font-bold tracking-tight text-black"
+                      >
+                        {{ selectedArtist.artists[0].name }}
+                      </h5>
+                      <p class="mb-3 font-normal text-black">
+                        {{ selectedArtist.name }}
+                      </p>
+                      <a
+                        @click.prevent="
+                          removeArtist(selectedArtists, selectedArtist)
+                        "
+                        class="inline-flex cursor-pointer items-center px-3 py-2 text-sm font-medium text-center text-white bg-indigo-400 rounded-lg hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300"
+                      >
+                        Fjern
+                      </a>
+                    </div>
+                  </div>
+                </TransitionGroup>
+              </div>
+            </TransitionGroup>
 
             <label for="message" class="block font-normal my-2"
               >Madallergener</label
@@ -410,59 +417,34 @@ const getToken = async () => {
 };
 
 const asyncFind = async () => {
-  // try {
-  //   isLoading.value = true;
-
-  //   //Lastfm api
-
-  //   const response = await fetch(
-  //     `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${query.value}&api_key=15f22b0f2e973cd37561b1d521edeff6&format=json&limit=5`,
-  //     {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept-Language': 'da-DK',
-  //       },
-  //     }
-  //   );
-
-  //   const data = await response.json();
-  //   console.log(data, 'data');
-  //   songs.value = data.results.trackmatches.track;
-
-  //   isLoading.value = false;
-  // } catch (error) {
-  //   console.error(error);
-  // }
-
   const url = new URL('https://api.spotify.com/v1/search');
   url.searchParams.append('q', query.value);
   url.searchParams.append('type', 'track');
   url.searchParams.append('limit', '5');
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token.value}`,
-    },
-  });
+  if (query.value !== '') {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+    });
 
-  if (response.ok) {
-    const data = await response.json();
-    songs.value = data.tracks.items;
-    isLoading.value = false;
-  } else {
-    console.error(response.statusText);
+    if (response.ok) {
+      const data = await response.json();
+      songs.value = data.tracks.items;
+      isLoading.value = false;
+    } else {
+      console.error(response.statusText);
+    }
   }
 };
 
 await getToken();
 
-const clearAll = () => {
-  selectedArtists.value = [] as any[];
-};
-
-const removeArtist = (index: any) => {
-  const selectedIndex = selectedArtists.value.indexOf(index);
-
-  selectedArtists.value.splice(selectedIndex, 1);
+const removeArtist = (array: any, itemToRemove: any) => {
+  const index = array.indexOf(itemToRemove);
+  if (index > -1) {
+    array.splice(index, 1);
+  }
 };
 </script>
