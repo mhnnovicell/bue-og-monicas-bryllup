@@ -312,8 +312,9 @@
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, helpers } from '@vuelidate/validators';
 import { useStoryblok } from '@storyblok/vue';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { supabase } from '../supabase';
+import { load } from 'recaptcha-v3';
 
 const { value: story } = await useStoryblok('home', { version: 'draft' });
 const { blok } = defineProps({ blok: Object });
@@ -329,6 +330,26 @@ const query = ref('');
 const token = ref(null);
 
 const scroolToElement = ref(event?.target as HTMLElement);
+
+const siteKey = computed(() => {
+  return import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
+});
+
+const asyncFunction = async () => {
+  await load(siteKey.value, {
+    useRecaptchaNet: true,
+    autoHideBadge: false,
+    renderParameters: {
+      badge: 'inline',
+    },
+  }).then(async (recaptcha) => {
+    await recaptcha.execute('<action>');
+    console.log(recaptcha, 'recaptcha');
+    console.log(token.value); // Will also print the token
+  });
+};
+
+asyncFunction();
 
 const form = ref({
   firstName: '',
@@ -413,6 +434,8 @@ const submitForm = async () => {
       alert('Email already exists');
       v$.value.email.$invalid;
     } else {
+      // invisibleRecaptcha.value.execute();
+
       await supabase.from('formular').insert(form.value);
 
       alert('Check your email for the login link!');
@@ -520,5 +543,13 @@ const addElement = (arr: any, itemIndex: any) => {
       behavior: 'smooth',
     });
   }
+};
+
+const handleError = () => {
+  // Do some validation
+};
+
+const handleSuccess = (response: string) => {
+  // Do some validation
 };
 </script>
