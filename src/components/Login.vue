@@ -338,7 +338,7 @@ const siteKey = computed(() => {
 const asyncFunction = async () => {
   await load(siteKey.value, {
     useRecaptchaNet: true,
-    autoHideBadge: false,
+    autoHideBadge: true,
     renderParameters: {
       badge: 'inline',
     },
@@ -348,8 +348,6 @@ const asyncFunction = async () => {
     console.log(token.value); // Will also print the token
   });
 };
-
-asyncFunction();
 
 const form = ref({
   firstName: '',
@@ -434,7 +432,7 @@ const submitForm = async () => {
       alert('Email already exists');
       v$.value.email.$invalid;
     } else {
-      // invisibleRecaptcha.value.execute();
+      asyncFunction();
 
       await supabase.from('formular').insert(form.value);
 
