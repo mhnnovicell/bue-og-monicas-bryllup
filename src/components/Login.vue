@@ -141,11 +141,11 @@
                   placeholder="Søg efter sang"
                   @keyup.enter.prevent="asyncFind()"
                   @keyup="asyncFind()"
-                  :disabled="selectedArtists.length === 3"
+                  :disabled="selectedArtists.length === 2"
                 />
 
                 <a
-                  :disabled="selectedArtists.length === 3"
+                  :disabled="selectedArtists.length === 2"
                   @click="asyncFind()"
                   @touchend="asyncFind()"
                   class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-indigo-400 rounded-r-lg border border-indigo-400 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-600"
@@ -175,7 +175,7 @@
                 v-if="
                   query !== '' &&
                   songs.length >= 1 &&
-                  selectedArtists.length < 3
+                  selectedArtists.length < 2
                 "
                 id="dropdown"
                 class="z-10 bg-indigo-400 divide-y divide-black rounded-lg shadow md:w-1/2 w-full"
@@ -184,13 +184,7 @@
                   class="py-2 text-sm text-white"
                   aria-labelledby="dropdown-button"
                 >
-                  <li
-                    v-for="value in songs"
-                    @click="
-                      selectedArtists.push(value) &&
-                        goToElement(scroolToElement)
-                    "
-                  >
+                  <li v-for="value in songs" @click="addElement(songs, value)">
                     <button
                       type="button"
                       class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-600 dark:hover:text-white text-left"
@@ -208,9 +202,9 @@
               <div v-if="selectedArtists.length >= 1">
                 <p
                   class="text-3xl font-semibold text-red-500 my-4 underline"
-                  v-if="selectedArtists.length === 3"
+                  v-if="selectedArtists.length === 2"
                 >
-                  Max 3 ønsker i alt!
+                  Max 2 ønsker i alt!
                 </p>
                 <TransitionGroup
                   name="fade"
@@ -278,15 +272,16 @@
               {{ error.$message }}
             </div>
 
-            <button
-              ref="scroolToElement"
-              type="submit"
-              class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
-              :disabled="!v$.$invalid && loading"
-              @click="submitForm"
-            >
-              Bekræft
-            </button>
+            <div ref="scroolToElement">
+              <button
+                type="submit"
+                class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
+                :disabled="!v$.$invalid && loading"
+                @click="submitForm"
+              >
+                Bekræft
+              </button>
+            </div>
           </form>
         </div>
         <!-- Modal footer -->
@@ -333,7 +328,7 @@ const query = ref('');
 
 const token = ref(null);
 
-const scroolToElement = ref(null);
+const scroolToElement = ref(event?.target as HTMLElement);
 
 const form = ref({
   firstName: '',
@@ -377,8 +372,6 @@ const rules = {
 
 const v$ = ref(useVuelidate(rules, form));
 
-onMounted(async () => {});
-
 const submitForm = async () => {
   const result = await v$.value.$validate();
   if (!result) {
@@ -410,29 +403,39 @@ const submitForm = async () => {
         selectedArtists.value[2].name;
     }
 
-    await supabase.from('formular').insert(form.value);
+    // Check if email already exists in the supabase table
+    const { data: existingUser } = await supabase
+      .from('formular')
+      .select('email')
+      .eq('email', form.value.email);
 
-    alert('Check your email for the login link!');
+    if (existingUser && existingUser.length > 0) {
+      alert('Email already exists');
+      v$.value.email.$invalid;
+    } else {
+      await supabase.from('formular').insert(form.value);
+
+      alert('Check your email for the login link!');
+
+      loading.value = false;
+
+      form.value = {
+        firstName: '',
+        lastName: '',
+        email: '',
+        foodAllergiesDesc: '',
+        musicWishOne: '',
+        musicWishTwo: '',
+        musicWishThree: '',
+      };
+
+      v$.value.$reset();
+      query.value = '';
+
+      selectedArtists.value = [];
+    }
   } catch (error: any) {
     alert(error.message);
-  } finally {
-    loading.value = false;
-
-    form.value = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      foodAllergiesDesc: '',
-      musicWishOne: '',
-      musicWishTwo: '',
-      musicWishThree: '',
-    };
-
-    query.value = '';
-
-    selectedArtists.value = [];
-
-    v$.value.$reset();
   }
 };
 
@@ -456,6 +459,20 @@ const getToken = async () => {
   } else {
     alert(response.statusText);
   }
+};
+
+const checkIfUserExists = async () => {
+  const { data, error } = await supabase
+    .from('formular')
+    .select('email')
+    .eq('email', form.value.email);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  console.log(data, 'data from supabase');
 };
 
 const asyncFind = async () => {
@@ -490,9 +507,18 @@ const removeArtist = (array: any, itemToRemove: any) => {
   }
 };
 
-const goToElement = (refName: any) => {
-  var element = scroolToElement.value;
-  var top = element?.offsetTop;
-  window.scrollTo(5000, top);
+const addElement = (arr: any, itemIndex: any) => {
+  selectedArtists.value.push(itemIndex);
+  if (scroolToElement.value) {
+    const y =
+      scroolToElement.value.getBoundingClientRect().top + window.scrollY;
+
+    console.log(y, 'y');
+
+    window.scroll({
+      top: y,
+      behavior: 'smooth',
+    });
+  }
 };
 </script>
