@@ -24,13 +24,13 @@ const story = await useStoryblok('home', { version: 'draft' });
               <li>
                 <RouterLink
                   to="/"
-                  class="block py-2 pl-3 pr-4 text-white md:bg-transparent md:p-0"
+                  class="block py-2 pl-3 pr-4 text-white md:p-0 hover:text-indigo-500"
                   >Home</RouterLink
                 >
               </li>
               <li>
                 <RouterLink
-                  class="block py-2 pl-3 pr-4 text-white md:bg-transparent md:p-0"
+                  class="block py-2 pl-3 pr-4 text-white md:p-0 hover:text-indigo-500"
                   to="/"
                   >About</RouterLink
                 >
