@@ -45,3 +45,4 @@ jobs:
          port: 22
          uploads: |
           ./dist/
+         delete: 'true'
