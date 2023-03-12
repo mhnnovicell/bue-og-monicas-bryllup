@@ -15,7 +15,6 @@ export default defineConfig({
         manualChunks: {
           'mapbox-gl': ['mapbox-gl'],
           'vue-mapbox-gl': ['@studiometa/vue-mapbox-gl'],
-          '@mapbox': ['@mapbox'],
         },
       },
     },
