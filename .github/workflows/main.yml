@@ -45,3 +45,4 @@ jobs:
          port: 22
          uploads: |
             ./dist/ => ${{ secrets.FTP_SERVER_DIRECTORY }}
+         delete: 'true'   
