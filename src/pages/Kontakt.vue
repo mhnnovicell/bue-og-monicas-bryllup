@@ -8,9 +8,8 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router';
 import Navigation from '../components/Navigation.vue';
 
 import { useStoryblok } from '@storyblok/vue';
-const story = await useStoryblok('home', { version: 'draft' });
+const story = await useStoryblok('kontakt', { version: 'draft' });
 </script>

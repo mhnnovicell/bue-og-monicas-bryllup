@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 const Login = () => import('../components/Login.vue');
 const Home = () => import('../pages/Home.vue');
+const Kontakt = () => import('../pages/Kontakt.vue');
+const Gaveønsker = () => import('../pages/Gaveønsker.vue');
 
 const routes = [
   { path: '/', component: Login, name: 'Login' },
   { path: '/forside', component: Home, name: 'Home' },
+  { path: '/kontakt', component: Kontakt, name: 'Kontakt' },
+  { path: '/gaveønsker', component: Gaveønsker, name: 'Gaveønsker' },
 ];
 
 const router = createRouter({

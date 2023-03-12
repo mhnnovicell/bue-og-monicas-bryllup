@@ -1,9 +1,16 @@
 <template>
+  <div class="flex flex-col text-center w-full md:mb-20" data-aos="fade">
+    <h1 class="headline mb-4 text-7xl italic text-white">Kontakt</h1>
+    <p class="lg:w-2/3 mx-auto leading-relaxed text-base font-light text-white">
+      Her skal stå noget uddybende tekst
+    </p>
+  </div>
   <div
     class="flex justify-center items-center w-full my-16 flex-col sm:flex-row"
   >
     <div
       class="flex sm:w-1/2 w-full justify-center items-center order-1 my-10 sm:mt-0 lg:p-4"
+      data-aos="fade"
     >
       <MapboxMap
         access-token="pk.eyJ1IjoiYnVzc2VtYW5kMTYiLCJhIjoiY2xkcHVjNXB2MTc1YTNudDZxaWx3MGhwaiJ9.idcVLIs4EH3nP1iEdvjiig"
@@ -28,7 +35,10 @@
     <div
       class="flex sm:w-1/2 w-full justify-center items-center order-2 flex-col"
     >
-      <div class="flex flex-col mb-10 items-center w-full justify-center">
+      <div
+        class="flex flex-col mb-10 items-center w-full justify-center"
+        data-aos="fade"
+      >
         <div
           class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-white text-violet-400 mb-5"
         >
@@ -53,14 +63,17 @@
           </svg>
         </div>
         <a
-          class="leading-relaxed text-base text-white max-w-sm underline"
+          class="font-light text-white max-w-sm underline"
           href="https://www.google.com/maps/place/Centralv%C3%A6rkstedet/@56.1499658,10.2050161,17z/data=!3m1!4b1!4m6!3m5!1s0x464c3f8e4785a45f:0x75b22231bd1930ac!8m2!3d56.1499628!4d10.2072048!16s%2Fg%2F12dpwy275"
           target="_blank"
         >
           {{ props.blok?.addressText }}
         </a>
       </div>
-      <div class="flex flex-col mb-10 items-center w-full justify-center">
+      <div
+        class="flex flex-col mb-10 items-center w-full justify-center"
+        data-aos="fade"
+      >
         <div
           class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-white text-violet-400 mb-5"
         >
@@ -79,7 +92,7 @@
             />
           </svg>
         </div>
-        <p class="leading-relaxed text-base text-white max-w-sm">
+        <p class="leading-relaxed text-base font-light text-white max-w-sm">
           {{
             new Date(props.blok?.datoText).toLocaleDateString('da-DK', {
               weekday: 'long',
@@ -90,7 +103,10 @@
           }}
         </p>
       </div>
-      <div class="flex flex-col mb-10 items-center w-full justify-center">
+      <div
+        class="flex flex-col mb-10 items-center w-full justify-center"
+        data-aos="fade"
+      >
         <div
           class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-white text-violet-400 mb-5"
         >
@@ -110,13 +126,16 @@
           </svg>
         </div>
         <a
-          class="leading-relaxed text-base text-white max-w-sm underline"
+          class="leading-relaxed text-base font-light text-white max-w-sm underline"
           :href="'tel:' + props.blok?.phoneText"
         >
           {{ props.blok?.phoneText }}
         </a>
       </div>
-      <div class="flex flex-col mb-10 items-center w-full justify-center">
+      <div
+        class="flex flex-col mb-10 items-center w-full justify-center"
+        data-aos="fade"
+      >
         <div
           class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-white text-violet-400 fill-violet-400 mb-5"
         >
@@ -138,7 +157,7 @@
             </g>
           </svg>
         </div>
-        <p class="leading-relaxed text-base text-white max-w-xs">
+        <p class="leading-relaxed text-base font-light text-white max-w-xs">
           {{ props.blok?.sleepText }}
         </p>
       </div>

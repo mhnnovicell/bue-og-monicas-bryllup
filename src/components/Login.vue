@@ -9,9 +9,11 @@
     tabindex="-1"
     aria-hidden="true"
     class="modal w-full h-full top-0 left-0 flex items-center justify-center overflow-visible"
+    data-aos="fade"
   >
     <div
       class="modal-container w-full h-full overflow-y-auto p-5 my-5 overflow-visible"
+      v-if="!signupWasSuccessfull"
     >
       <!-- Modal content -->
       <div
@@ -19,27 +21,9 @@
       >
         <!-- Modal header -->
         <div class="flex items-start justify-between p-4 border-b rounded-t">
-          <h3 class="text-6xl font-normal text-gray-900">
+          <h3 class="md:text-7xl text-4xl italic text-black">
             {{ story.content.body[0].headline }}
           </h3>
-          <!-- <button
-            type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            data-modal-hide="staticModal"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-          </button> -->
         </div>
         <!-- Modal body -->
         <div
@@ -51,7 +35,7 @@
               {{ story.content.body[0].firstNameLabel }}
             </label>
             <input
-              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
               id="firstName"
               type="text"
               v-model.trim="v$.firstName.$model"
@@ -77,7 +61,7 @@
               {{ story.content.body[0].lastNameLabel }}
             </label>
             <input
-              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
               id="lastName"
               type="text"
               v-model.trim="v$.lastName.$model"
@@ -103,7 +87,7 @@
               {{ story.content.body[0].emailLabel }}
             </label>
             <input
-              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
               id="email"
               type="email"
               v-model.trim="v$.email.$model"
@@ -137,7 +121,7 @@
               <div class="relative w-full mb-3">
                 <input
                   v-model="query"
-                  class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg rounded"
+                  class="block p-2.5 w-full z-20 text-sm text-black bg-white rounded-r-lg rounded font-light"
                   type="search"
                   placeholder="Søg efter sang"
                   @keyup.enter.prevent="asyncFind()"
@@ -188,7 +172,7 @@
                   <li v-for="value in songs" @click="addElement(songs, value)">
                     <button
                       type="button"
-                      class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-600 dark:hover:text-white text-left"
+                      class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-indigo-600 dark:hover:text-white text-left font-light text-base"
                     >
                       <span>
                         {{ value.artists[0].name }} - {{ value.name }}
@@ -230,7 +214,7 @@
                       >
                         {{ selectedArtist.artists[0].name }}
                       </h4>
-                      <p class="mb-3 font-normal text-lg text-black">
+                      <p class="mb-3 font-light text-base text-black">
                         {{ selectedArtist.name }}
                       </p>
                       <a
@@ -253,7 +237,7 @@
             <textarea
               id="message"
               rows="4"
-              class="appearance-none border rounded w-full py-2 px-3 mb-3"
+              class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
               placeholder="Beskriv dine madallergener"
               v-model.trim="v$.foodAllergiesDesc.$model"
               @blur="v$.foodAllergiesDesc.$touch"
@@ -272,26 +256,146 @@
             >
               {{ error.$message }}
             </div>
+            <div class="flex">
+              <span
+                v-if="!secondPersonIsActive"
+                class="mr-3 text-base text-black font-normal"
+                >Tilføj ekstra person</span
+              >
+              <span v-else class="mr-3 text-base font-normal text-black"
+                >Fjern ekstra person</span
+              >
+              <label
+                class="relative inline-flex items-center mb-4 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  class="sr-only peer"
+                  v-model="secondPersonIsActive"
+                  id="large-toggle"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-indigo-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-400"
+                ></div>
+              </label>
+            </div>
 
-            <div ref="scroolToElement">
+            <TransitionGroup
+              name="fade"
+              tag="div"
+              class="flex md:flex-row flex-col my-4"
+            >
+              <div v-if="secondPersonIsActive" class="flex flex-col w-full">
+                <label
+                  class="block font-normal my-2"
+                  for="firstNameSecondPerson"
+                >
+                  <!-- {{ story.content.body[0].firstNameLabel }} -->
+                  Fornavn
+                </label>
+                <input
+                  class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
+                  id="firstNameSecondPerson"
+                  type="text"
+                  placeholder="Indtast fornavn"
+                  v-model="form.firstNameSecondPerson"
+                />
+                <label
+                  class="block font-normal my-2"
+                  for="lastNameSecondPerson"
+                >
+                  <!-- {{ story.content.body[0].firstNameLabel }} -->
+                  Efternavn
+                </label>
+                <input
+                  class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
+                  id="lastNameSecondPerson"
+                  type="text"
+                  placeholder="Indtast efternavn"
+                  v-model="form.lastNameSecondPerson"
+                />
+                <label
+                  for="foodAllergiesDescSecondPerson"
+                  class="block font-normal my-2"
+                  >Madallergener</label
+                >
+                <textarea
+                  id="foodAllergiesDescSecondPerson"
+                  rows="4"
+                  class="appearance-none border rounded w-full py-2 px-3 mb-3 text-base font-light"
+                  placeholder="Beskriv dine madallergener"
+                  v-model="form.foodAllergiesDescSecondPerson"
+                ></textarea>
+              </div>
+            </TransitionGroup>
+
+            <div class="flex">
+              <div ref="scroolToElement">
+                <button
+                  type="submit"
+                  class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4 mr-4"
+                  :disabled="!v$.$invalid && loading"
+                  @click="submitForm"
+                >
+                  Bekræft
+                </button>
+              </div>
               <button
                 type="submit"
                 class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
                 :disabled="!v$.$invalid && loading"
-                @click="submitForm"
+                @click="goToFrontpage"
               >
-                Bekræft
+                Spring over
               </button>
             </div>
-            <button
-              type="submit"
-              class="bg-indigo-400 hover:bg-indigo-700 text-white font-normal py-2 px-4 rounded my-4"
-              :disabled="!v$.$invalid && loading"
-              @click="goToFrontpage"
-            >
-              Spring over
-            </button>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="flex items-center justify-center h-auto self-center">
+      <div class="p-4 rounded shadow-lg ring ring-indigo-600/50 bg-white">
+        <div class="flex flex-col items-center my-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="text-green-600 w-28 h-28"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h1 class="text-4xl font-bold">Tak!</h1>
+          <p class="mb-2">
+            Tak for at tilmelde dig. Vi vender tilbage til dig.
+          </p>
+
+          <a
+            @click="router.push('/forside')"
+            class="cursor-pointer inline-flex items-center px-4 py-2 mt-4 text-white bg-indigo-600 border border-indigo-600 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring"
+          >
+            <span class="text-sm font-medium"> Forsæt </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-3 h-3 ml-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </a>
         </div>
       </div>
     </div>
@@ -329,6 +433,10 @@ const siteKey = computed(() => {
   return import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 });
 
+const secondPersonIsActive = ref(false);
+
+const signupWasSuccessfull = ref(false);
+
 const asyncFunction = async () => {
   await load(siteKey.value, {
     useRecaptchaNet: true,
@@ -351,6 +459,9 @@ const form = ref({
   musicWishOne: '',
   musicWishTwo: '',
   musicWishThree: '',
+  firstNameSecondPerson: '',
+  lastNameSecondPerson: '',
+  foodAllergiesDescSecondPerson: '',
 });
 
 const rules = {
@@ -430,6 +541,8 @@ const submitForm = async () => {
 
       await supabase.from('formular').insert(form.value);
 
+      signupWasSuccessfull.value = true;
+
       alert('Check your email for the login link!');
 
       loading.value = false;
@@ -442,6 +555,9 @@ const submitForm = async () => {
         musicWishOne: '',
         musicWishTwo: '',
         musicWishThree: '',
+        firstNameSecondPerson: '',
+        lastNameSecondPerson: '',
+        foodAllergiesDescSecondPerson: '',
       };
 
       v$.value.$reset();

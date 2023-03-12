@@ -1,11 +1,13 @@
 <template>
   <section v-editable="blok" class="w-full h-full flex flex-col">
     <h1
+      data-aos="fade"
       class="w-full text-center flex justify-center self-center items-center mt-16 align-middle text-7xl italic text-white headline"
     >
       {{ props.blok?.headline }}
     </h1>
     <div
+      data-aos="fade"
       v-if="!showCountdown"
       class="flex w-full h-1/2 justify-center self-center items-center text-center mt-16 p-4 md:p-0 countdown-container"
     >
