@@ -35,12 +35,13 @@ jobs:
       - run: npm install
       - run: npm run build
           
+
       - name: deploy file to server
-        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        uses: Dylan700/sftp-upload-action@latest
         with:
-          username: ${{ secrets.FTP_USERNAME }}
-          server: ${{ secrets.FTP_SERVER }}
-          ssh_private_key: ${{ secrets.FTP_PASSWORD }}
-          local_path: './dist/'
-          remote_path: ${{ secrets.FTP_SERVER_DIRECTORY }}
-          args: '-o ConnectTimeout=5'
+         server: ${{ secrets.FTP_SERVER }}
+         username: ${{ secrets.FTP_USERNAME }}
+         password: ${{ secrets.FTP_PASSWORD }}
+         port: 22
+         uploads: |
+          ./ => ./dist/
