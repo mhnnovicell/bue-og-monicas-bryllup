@@ -43,3 +43,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_SERVER_DIRECTORY }}
           local-dir: ./dist/
+          
+      - name: deploy file to server
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        with:
+          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_SERVER }}
+          ssh_private_key: ${{ secrets.FTP_PASSWORD }}
+          local_path: './dist/'
+          remote_path: ${{ secrets.FTP_SERVER_DIRECTORY }}
+          args: '-o ConnectTimeout=5'
