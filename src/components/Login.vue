@@ -437,6 +437,8 @@ const secondPersonIsActive = ref(false);
 
 const signupWasSuccessfull = ref(false);
 
+const emailExists = ref(false);
+
 const asyncFunction = async () => {
   await load(siteKey.value, {
     useRecaptchaNet: true,
@@ -544,6 +546,16 @@ const submitForm = async () => {
       signupWasSuccessfull.value = true;
 
       alert('Check your email for the login link!');
+
+      // Store the submitted data in localstorage
+      localStorage.setItem('emailValue', JSON.stringify(form.value.email));
+
+      if (localStorage.getItem('emailValue')) {
+        emailExists.value = true;
+        router.push('/forside');
+      } else {
+        emailExists.value = false;
+      }
 
       loading.value = false;
 
